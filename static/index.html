@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Генератор отмазок 🎭</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --text: #ffffff;
+    --muted: #888888;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --green: #22c55e;
+    --border: #262626;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 64px 20px 80px;
+  }
+  header { text-align: center; margin-bottom: 40px; }
+  h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    margin: 0;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  select {
+    width: 100%;
+    background: #0f0f0f;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23888' d='M6 8L0 0h12z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+  select:focus { outline: none; border-color: var(--accent); }
+  button {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: background 0.15s;
+  }
+  button:hover:not(:disabled) { background: var(--accent-hover); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  .excuse-text {
+    font-size: 20px;
+    line-height: 1.5;
+    font-weight: 500;
+    margin: 0 0 24px;
+  }
+  .rating-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .rating-label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .rating-value { font-size: 14px; font-weight: 600; }
+  .progress {
+    width: 100%;
+    height: 8px;
+    background: #0f0f0f;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    transition: width 0.5s ease, background 0.3s;
+  }
+  .verdict {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  #copyBtn {
+    background: #262626;
+    margin-top: 8px;
+  }
+  #copyBtn:hover:not(:disabled) { background: #333333; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Генератор отмазок 🎭</h1>
+    <p class="subtitle">Убедительные объяснения для любой ситуации</p>
+  </header>
+
+  <div class="card">
+    <label for="situation">Ситуация</label>
+    <select id="situation">
+      <option value="Опоздал на работу">Опоздал на работу</option>
+      <option value="Не сделал домашку">Не сделал домашку</option>
+      <option value="Забыл про день рождения">Забыл про день рождения</option>
+      <option value="Не ответил на сообщение">Не ответил на сообщение</option>
+      <option value="Пропустил важный звонок">Пропустил важный звонок</option>
+      <option value="Не пришёл на встречу">Не пришёл на встречу</option>
+    </select>
+    <button id="generateBtn">Сгенерировать отмазку</button>
+  </div>
+
+  <div class="card hidden" id="result">
+    <p class="excuse-text" id="excuseText"></p>
+    <div class="rating-row">
+      <span class="rating-label">Правдоподобность</span>
+      <span class="rating-value" id="ratingValue">0%</span>
+    </div>
+    <div class="progress">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+    <button id="copyBtn">📋 Скопировать и отправить боссу</button>
+  </div>
+</div>
+
+<script>
+  const generateBtn = document.getElementById('generateBtn');
+  const situationEl = document.getElementById('situation');
+  const resultEl = document.getElementById('result');
+  const excuseTextEl = document.getElementById('excuseText');
+  const ratingValueEl = document.getElementById('ratingValue');
+  const progressFillEl = document.getElementById('progressFill');
+  const verdictEl = document.getElementById('verdict');
+  const copyBtn = document.getElementById('copyBtn');
+
+  function verdictFor(rating) {
+    if (rating <= 40) return { color: '#ef4444', emoji: '😬', text: 'Сомнительно' };
+    if (rating <= 70) return { color: '#f59e0b', emoji: '🤔', text: 'Сойдёт' };
+    return { color: '#22c55e', emoji: '😇', text: 'Почти правда' };
+  }
+
+  function render(data) {
+    const rating = Math.max(0, Math.min(100, Number(data.rating) || 0));
+    const v = verdictFor(rating);
+    excuseTextEl.textContent = data.excuse;
+    ratingValueEl.textContent = rating + '%';
+    progressFillEl.style.width = rating + '%';
+    progressFillEl.style.background = v.color;
+    verdictEl.textContent = v.emoji + ' ' + v.text;
+    resultEl.classList.remove('hidden');
+  }
+
+  async function generate() {
+    const situation = situationEl.value;
+    generateBtn.disabled = true;
+    const originalText = generateBtn.textContent;
+    generateBtn.textContent = 'Генерирую...';
+    try {
+      const res = await fetch('/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ situation })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      render(data);
+    } catch (err) {
+      alert('Ошибка: ' + err.message);
+    } finally {
+      generateBtn.disabled = false;
+      generateBtn.textContent = originalText;
+    }
+  }
+
+  async function copyExcuse() {
+    try {
+      await navigator.clipboard.writeText(excuseTextEl.textContent);
+      const original = copyBtn.textContent;
+      copyBtn.textContent = '✅ Скопировано!';
+      setTimeout(() => { copyBtn.textContent = original; }, 2000);
+    } catch (err) {
+      alert('Не удалось скопировать: ' + err.message);
+    }
+  }
+
+  generateBtn.addEventListener('click', generate);
+  copyBtn.addEventListener('click', copyExcuse);
+</script>
+</body>
+</html>
